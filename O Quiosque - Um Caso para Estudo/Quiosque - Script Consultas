@@ -1,0 +1,342 @@
+--
+-- Unidade Curricular de Administração e Exploração Avançada de Bases de Dados.
+-- Sistemas de Dados Relacionais.
+-- SQL 
+--
+-- Q U E R I E S
+-- Operações de Manipulação de Dados - LMD (DML).
+-- Consultas de Dados
+-- Exemplos de Aplicação.
+-- Exercícios apresentados nas aulas.
+-- Belo, O., 2023.
+--
+-- Quiosque (V1.00/2023) Outubro/2023
+
+-- SET sql_safe_updates = ON;
+-- SET sql_safe_updates = OFF;
+
+-- SET sql_safe_updates=0;
+-- SET sql_safe_updates=1;
+
+-- Identificação da base de dados de trabalho 
+USE Quiosque;
+
+-- Manipulação de dados - Queries simples
+--
+-- Consulta dos dados contidos na tabela "Cliente"
+SELECT *
+	FROM Cliente;
+
+--
+SELECT 2;
+SELECT 6*9/4 AS "Cálculo";
+SELECT NULL;
+
+SELECT *
+	FROM Produto;
+    
+SELECT Id, Designacao
+	FROM Produto;
+
+SELECT Designacao AS Nome, Id AS Código, '______' AS Observações
+	FROM Produto;
+    
+SELECT Nome
+	FROM cliente
+    WHERE Id = '1';
+    
+SELECT Nome, Rua, Localidade, CodigoPostal
+	FROM Cliente
+    WHERE Id = '2' OR Id = '3';
+
+SELECT Nome, Rua, Localidade, CodigoPostal
+	FROM Cliente
+    WHERE Id = '1' OR Id = '3' OR Id ='5';
+
+SELECT Id, Rua, Localidade, CodigoPostal
+	FROM Cliente
+    WHERE Id IN ('1','3','5');
+    
+SELECT Nome
+	FROM cliente
+    ORDER BY Nome ASC;
+    
+SELECT Nome
+	FROM cliente
+	WHERE Localidade = 'Pedrosa'
+    ORDER BY Nome ASC;
+
+SELECT Número, Data
+	FROM Reserva
+    WHERE Data = '2023-10-10';
+    
+SELECT Número, Data
+	FROM Reserva
+    WHERE Data >= '2023-10-05' AND Data <= '2023-10-10';
+
+SELECT Número, Data, Cliente
+	FROM Reserva
+    WHERE Data BETWEEN '2023-10-05' AND '2023-10-10';
+
+SELECT * 
+	FROM Fornecedor;
+
+SELECT * 
+	FROM Fornecedor
+    ORDER BY Designação ASC;
+    
+SELECT Contacto, Designação 
+	FROM Fornecedor
+    ORDER BY Contacto DESC;
+
+SELECT Contacto, Designação 
+	FROM Fornecedor
+	WHERE Contacto IS NOT NULL
+    ORDER BY Contacto ASC;
+
+SELECT Designação 
+	FROM Fornecedor
+	WHERE Contacto IS NULL;
+
+SELECT Designação, Contacto
+	FROM Fornecedor
+	WHERE Contacto = 'António Silva'; 
+
+-- '%', conjunto de carateres
+-- '_', um único caracter
+SELECT Designação, Contacto
+	FROM Fornecedor
+	WHERE Designação LIKE 'R%';
+    
+SELECT Designação, Contacto
+	FROM Fornecedor
+	WHERE Contacto LIKE '%Let%'; 
+SELECT Designação, Contacto
+	FROM Fornecedor
+	WHERE Contacto LIKE '%Let_'; 
+
+SELECT Designação, Contacto
+	FROM Fornecedor
+	WHERE Contacto LIKE '___'; 
+
+SELECT Designação, Contacto
+	FROM Fornecedor
+	WHERE Contacto LIKE 'a%b'; 
+
+SELECT Designação, Contacto
+	FROM Fornecedor
+	WHERE Contacto LIKE 'a_b'; 
+    
+SELECT *
+	FROM Fatura;
+            
+    
+-- Combinação de dados entre tabelas
+--
+SELECT *
+	FROM Cliente INNER JOIN Reserva
+		ON Id=Cliente;
+--
+SELECT C.Nome, R.Número, R.Data, R.Estado
+	FROM Cliente AS C INNER JOIN Reserva AS R
+		ON C.Id=R.Cliente;
+--
+SELECT C.Nome, R.Número, R.Data, R.Estado
+	FROM Cliente AS C INNER JOIN Reserva AS R
+		ON C.Id=R.Cliente
+    WHERE C.Nome = 'Pedro Castro Cardoso';
+    
+SELECT C.Nome, R.Número, R.Data, R.Estado
+	FROM Cliente AS C INNER JOIN Reserva AS R
+		ON C.Id=R.Cliente
+    ORDER BY R.Data ASC;
+
+-- 
+SELECT F.Número, C.Nome, C.Contribuinte, R.Número, F.Valor
+	FROM Cliente AS C 
+			INNER JOIN Reserva AS R
+			ON C.Id=R.Cliente
+				INNER JOIN Fatura AS F
+				ON R.Número=F.Reserva; 
+-- OU
+SELECT F.Número, C.Nome, C.Contribuinte, R.Número, F.Valor
+	FROM Cliente AS C, Reserva AS R, Fatura AS F
+	WHERE C.Id=R.Cliente AND R.Número=F.Reserva; 
+
+
+
+SELECT *
+	FROM Cliente;
+
+-- Quais os nomes dos fornecedores dos produtos que foram reservados pelos 
+-- clientes '1' e '2'. 
+
+SELECT R.Cliente, P.Designacao, F.Designação
+	FROM Reserva AS R 
+		INNER JOIN ReservaProduto AS RP
+		ON R.Número=RP.Reserva
+			INNER JOIN Produto AS P
+            ON RP.Produto=P.Id
+				INNER JOIN ProdutoFornecedor AS PF
+                ON P.Id=PF.Produto
+					INNER JOIN Fornecedor AS F
+					ON PF.Fornecedor=F.Id
+    WHERE R.Cliente IN (1,2);
+    
+    
+SELECT DISTINCT Cliente
+	FROM Reserva;
+        
+SELECT  Id
+	FROM Cliente;
+    
+    
+-- Utilização de subqueries
+SELECT *
+	FROM Cliente
+    WHERE Id IN (
+		SELECT DISTINCT Cliente FROM Reserva);
+
+SELECT *
+	FROM Cliente
+    WHERE Id NOT IN (
+		SELECT DISTINCT Cliente FROM Reserva);
+
+-- Q01: Qual o fornecedor do produto '1'?
+SELECT *
+	FROM ProdutoFornecedor
+    WHERE Produto = '1';
+    
+-- Q01: Qual o nome do fornecedor do produto '1'?
+SELECT *
+	FROM ProdutoFornecedor AS PF 
+		INNER JOIN Fornecedor AS F
+		ON PF.Fornecedor=F.Id
+    WHERE PF.Produto = '1';
+
+-- Q02: Qual a data da última reserva?
+SELECT Número, Data
+	FROM Reserva
+    ORDER BY Data DESC
+    LIMIT 1;
+
+SELECT *
+	FROM Cliente
+    LIMIT 3;
+
+SELECT *
+	FROM Cliente
+    LIMIT 1,1;
+
+SELECT *
+	FROM Cliente
+    LIMIT 1 OFFSET 2;
+
+-- Q03: Quais os nomes dos clientes que fizeram reservas no dia '2023-10-10'?
+SELECT Cliente.Nome, Reserva.Número, Reserva.Data
+	FROM Reserva 
+		INNER JOIN Cliente
+		ON Cliente=Id
+    WHERE Data = '2023-10-10';
+
+SELECT DISTINCT Cliente.Nome, Reserva.Número, Reserva.Data
+	FROM Reserva 
+		INNER JOIN Cliente
+		ON Cliente=Id
+    WHERE Data = '2023-10-10';
+
+SELECT DISTINCT Cliente.Nome
+	FROM Reserva 
+		INNER JOIN Cliente
+		ON Cliente=Id
+    WHERE Data = '2023-10-10';
+
+-- Q04: Fornecer uma lista dos produtos do quiosque, por ordem alfabética.
+SELECT Id, Designacao
+	FROM Produto
+    ORDER BY Designacao ASC; 
+
+-- Q05: Qual o preço do produto '1'?
+SELECT Id, Preco 
+	FROM Produto
+    WHERE Id = '1';
+
+-- Q06: A lista de clientes que têm reservas efetuadas.
+SELECT DISTINCT Cliente, Estado
+	FROM Reserva;
+
+-- Q07: Qual a fatura que foi emitida para a reserva '1'?
+SELECT Número, Reserva
+	FROM Fatura
+    WHERE Reserva = '1'; 
+
+-- Q08: Qual é o telefone do cliente da fatura '2'?
+SELECT CT.Telefone, C.Nome AS "Cliente", F.Número AS "Fatura"
+	FROM Fatura AS F 
+		INNER JOIN Reserva AS R
+		ON R.Número=F.Reserva
+			INNER JOIN Cliente AS C
+            ON C.Id=R.Cliente
+				INNER JOIN ClienteTelefone AS CT
+                ON CT.Cliente=C.Id
+	WHERE F.Número = '2';
+
+-- Q09: Quais os nomes dos clientes com reservas por satisfazer?
+SELECT DISTINCT Nome, Número
+	FROM Reserva  
+		INNER JOIN Cliente
+		ON Cliente = Id
+    WHERE Estado = 'N'
+    ORDER BY NOme ASC;
+
+-- Q09: Quais os nomes dos clientes com reservas por satisfazer?
+-- Indicar também o número das reservas.
+SELECT DISTINCT Nome, Número
+	FROM Reserva  
+		INNER JOIN Cliente
+		ON Cliente = Id
+    WHERE Estado = 'N'
+    ORDER BY NOme ASC;
+
+-- Q10: Quais datas das reservas que referem o produto '2'
+SELECT Data
+	FROM Reserva INNER 
+		JOIN ReservaProduto
+        ON Número=Reserva
+	WHERE Produto = '2';
+
+-- Q11: Qual o valor das reservas cujo nome do cliente começa por 'Francisca'
+SELECT C.Nome, SUM(RP.Valor) AS "Valor Total" 
+	FROM Reserva AS R 
+		INNER JOIN Cliente AS C
+		ON Cliente = Id
+			INNER JOIN ReservaProduto AS RP
+            ON R.Número=RP.Reserva
+    WHERE Nome LIKE 'Francisca%'
+	GROUP BY C.Nome;
+    
+-- Definição e utilização de vistas (VIEW)
+--
+-- SELECT * FROM Contribuintes;
+-- DROP VIEW Contribuintes;
+CREATE VIEW Contribuintes AS
+	SELECT Id, Nome, Contribuinte 
+		FROM Cliente;
+
+-- SELECT * FROM Forneceu;
+-- DROP VIEW Forneceu;
+CREATE VIEW Forneceu AS
+SELECT R.Cliente AS "Nr Cliente", P.Designacao AS "Produto", F.Designação AS "Fornecedor"
+	FROM Reserva AS R 
+		INNER JOIN ReservaProduto AS RP
+		ON R.Número=RP.Reserva
+			INNER JOIN Produto AS P
+            ON RP.Produto=P.Id
+				INNER JOIN ProdutoFornecedor AS PF
+                ON P.Id=PF.Produto
+					INNER JOIN Fornecedor AS F
+					ON PF.Fornecedor=F.Id;
+ 
+-- <fim>
+-- Belo, 2023
+

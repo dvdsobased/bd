@@ -1,0 +1,204 @@
+--
+-- Unidade Curricular de Administração e Exploração Avançada de Bases de Dados.
+-- Sistemas de Dados Relacionais.
+-- SQL 
+--
+-- Q U E R I E S
+-- Operações de Manipulação de Dados - LMD (DML).
+-- Povoamento da Base de Dados.
+-- Exemplos de Aplicação.
+-- Exercícios apresentados nas aulas.
+-- Belo, O., 2023.
+--
+-- Quiosque (V1.00/2023) Outubro/2023
+
+-- SET sql_safe_updates = ON;
+-- SET sql_safe_updates = OFF;
+
+-- SET sql_safe_updates=0;
+-- SET sql_safe_updates=1;
+
+-- Identificação da base de dados de trabalho 
+USE Quiosque;
+
+-- Povoamento da base de dados
+-- A instrução SELECT
+-- Inserção de dados na tabela "Cliente"
+INSERT INTO Cliente
+	(Id, Nome, Rua, Localidade, CodigoPostal)
+    VALUES('1','Francisca Rede da Costa e Silva','Rua Dom Pedro V, 34, 4º','Pedrosa','890-A234 Pedrosa');
+INSERT INTO Cliente
+	(Id, Nome, Rua, Localidade, CodigoPostal)
+    VALUES('2','Pedro Castro Cardoso','Av da 31 de Janeiro','Castrinho','8065-ASZ Aires-de-Cima');
+INSERT INTO Cliente
+	(Id, Nome, Rua, Localidade, CodigoPostal)
+    VALUES('3','Maria Emília da Costa Cardoso Pires da Silva Pedrosa',
+    'Av da Monarquia, 23, 78ºa','Castelo','9999-XYX Citadela');
+INSERT INTO Cliente
+	(Id, Nome)
+    VALUES
+		('4','Ana de Sousa Cardoso Pires'),
+		('Carlos João Francisco e Siva','5');
+INSERT INTO Cliente
+	(Id, Nome, Localidade, CodigoPostal, Rua)
+    VALUES('6','Felisberta Casinha do Lar',
+    'Casinhas','9999-ABC Aldeias','Beco da Moraria, 1 R/C');
+
+SELECT *
+	FROM Cliente;
+    
+UPDATE Cliente
+	SET Contribuinte = '111111111'
+		WHERE Id = 1;
+UPDATE Cliente
+	SET Contribuinte = '222222222'
+		WHERE Id = 2;
+UPDATE Cliente
+	SET Contribuinte = '333333333'
+		WHERE Id = 3;
+UPDATE Cliente
+	SET Contribuinte = '444444444'
+		WHERE Id = 4;
+
+-- Consulta dos dados contidos na tabela "Cliente"
+-- SELECT * FROM Cliente;
+
+-- Inserção de dados na tabela "ClienteTelefone"
+INSERT INTO ClienteTelefone
+	(Cliente, Telefone)
+    VALUES('1','+111 111111111');
+INSERT INTO ClienteTelefone
+	(Cliente, Telefone)
+    VALUES('2','+222 22222222');
+INSERT INTO ClienteTelefone
+	(Cliente, Telefone)
+    VALUES('2','+222 111111111');
+INSERT INTO ClienteTelefone
+	(Cliente, Telefone)
+    VALUES
+		('4','+444 111111111'),
+		('4','+444 222222222'),
+		('5','+555 111111111'),
+		('6','+666 111111111');
+INSERT INTO ClienteTelefone
+	(Cliente, Telefone)
+    VALUES('6','+666 66666666');
+INSERT INTO ClienteTelefone
+	(Cliente, Telefone)
+    VALUES('7','+777 111111111');
+
+-- Consulta dos dados contidos na tabela "ClienteTelefone"
+-- SELECT * FROM ClienteTelefone;
+
+-- Operações de atualização da base de dados
+--
+-- A instrução DELETE
+-- Remoção de dados da tabela "ClienteTelefone"
+DELETE FROM ClienteTelefone;
+--
+DELETE FROM ClienteTelefone
+	WHERE Cliente = '2' AND Telefone = '+222 111111111';
+
+-- A instrução UPDATE
+-- Alteração de dados da tabela "Cliente"
+UPDATE Cliente
+	SET Localidade = 'Arruada Molhada'    
+    WHERE Id = '4';
+
+-- Alteração de dados da tabela "ClienteTelefone"
+UPDATE ClienteTelefone
+	SET Telefone = '+222 333333333'
+    WHERE Telefone = '+222 111111111';
+
+
+-- Inserção de dados na tabela "Reserva"
+INSERT INTO Reserva
+	(Número, Data, Estado, Cliente)
+    VALUES('1','2023-10-10','N','1');
+INSERT INTO Reserva
+	(Estado, Cliente, Número, Data)
+    VALUES('N','2','2','2023-10-11');
+INSERT INTO Reserva
+    VALUES 
+		('3','2023-10-10','N','1'),
+		('4','2023-10-10','N','1');
+    
+-- Consulta dos dados contidos na tabela "Reserva"
+-- SELECT * FROM Reserva;
+
+-- Inserção de dados na tabela "Produto"
+-- DELETE FROM Produto;
+-- DELETE FROM Produto
+-- WHERE Id = '1';
+INSERT INTO Produto
+	(Id, Designacao, Tipo, Preco)
+    VALUES
+		('1','Jornal das Horas','JOR','1.00'),
+		('2','Revista da Lebre','REV','1.50'),
+		('3','Cromos do Fantástico','CRO','1.00'),
+		('4','Tabaco do Fiel','TAB','5.50'),
+		('5','Canetas sem Tinta','CAN','2.50'),
+		('6','Lápis sem Côr','LAP','1.25'),
+		('7','Raspadinhas da Falência','RAP','10.75');
+
+-- Consulta dos dados contidos na tabela "Produto"
+-- SELECT * FROM Produto;
+
+-- Inserção de dados na tabela "ReservaProduto"
+-- DELETE FROM ReservaProduto;
+INSERT INTO ReservaProduto
+	(Reserva, Produto, Preco, Quantidade, Valor)
+    VALUES
+		('1','1','1.00','1','1.00'),
+		('1','2','1.50','1','1.50'),
+        ('2','4','5.50','4','22.00'),
+        ('3','3','1.00','10','10.00');
+
+-- Consulta dos dados contidos na tabela "ReservaProduto"
+-- SELECT * FROM ReservaProduto;
+
+-- Inserção de dados na tabela "Fornecedor"
+-- SELECT * FROM Fornecedor;
+-- DELETE FROM Fornecedor;
+INSERT INTO Fornecedor
+	(Id, Designação, Contacto)
+    VALUES
+        ('1','Mangas & Companhia','Custódia'),
+        ('2','Jornais da República',NULL),
+        ('3','Cromos, Cromos e Cromos','Silva'),
+        ('4','revistas da Atualidade','Maria Letrada');
+
+-- 
+INSERT INTO Fatura
+	(Número, Reserva, Valor)
+    VALUES
+    ('1','2','22.00'),
+    ('2','3','10.00');
+
+-- Alteração de dados na tabela "Fatura"
+UPDATE Fatura
+	SET Data = '2023-10-05'
+    WHERE Número = '1';
+UPDATE Fatura
+	SET Data = '2023-10-06'
+    WHERE Número = '2';
+
+UPDATE Fatura
+	SET Data = '2023-10-05'
+    WHERE Número = '1' OR Número = '2';
+UPDATE Fatura
+	SET Data = '2023-10-05'
+    WHERE Número = '1' AND Número = '2';
+
+UPDATE Fatura
+	SET Data = '2023-10-05'
+    WHERE Data IS NULL;
+    
+
+-- SELECT * FROM Fatura;
+-- SELECT * FROM Reserva;
+-- SELECT * FROM ReservaProduto;
+    
+-- <fim>
+-- Belo, 2023
+    

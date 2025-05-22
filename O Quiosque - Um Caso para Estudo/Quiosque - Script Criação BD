@@ -1,0 +1,123 @@
+--
+-- Unidade Curricular de Administração e Exploração Avançada de Bases de Dados.
+-- Sistemas de Dados Relacionais.
+-- SQL 
+--
+-- Q U E R I E S
+-- Operações de Descrição de Dados - LDD (DDL).
+-- Gestão de esquemas de bases de dados.
+-- Exemplos de Aplicação.
+-- Exercícios apresentados nas aulas.
+-- Belo, O.
+--
+-- Quiosque (V1.00/2023) Outubro/2023
+
+-- Criação da base de dados
+CREATE DATABASE Quiosque;
+-- Remover a base do sistema
+-- DROP DATABASE Quiosque;
+ 
+-- Identificação da base de dados de trabalho 
+USE Quiosque;
+
+-- Criação da tabela "Cliente"
+-- DROP TABLE Cliente;
+CREATE TABLE Cliente (
+	Id INTEGER NOT NULL,
+    Nome VARCHAR(75) NOT NULL,
+    Rua VARCHAR(100) NULL,
+    CodigoPostal VARCHAR(75) NULL,
+    Localidade VARCHAR(75) NULL,
+		PRIMARY KEY (Id)
+);
+
+--
+ALTER TABLE Cliente
+	ADD COLUMN Contribuinte INT;
+        
+-- Criação da tabela "ClienteTelefone"
+-- DROP TABLE ClienteTelefone;
+CREATE TABLE ClienteTelefone (
+    Cliente INT NOT NULL,
+    Telefone VARCHAR(15),
+    PRIMARY KEY (Cliente, Telefone),
+    FOREIGN KEY (Cliente) 
+		REFERENCES Cliente (Id)
+);
+ 
+-- Criação da tabela "Reserva"
+-- DROP TABLE Reserva;
+CREATE TABLE Reserva (
+    Número INTEGER NOT NULL,
+    Data DATE NOT NULL,
+    Estado CHAR(01) NOT NULL DEFAULT 'N',
+    Cliente INTEGER NOT NULL,
+    PRIMARY KEY (Número),
+    FOREIGN KEY (Cliente)
+		REFERENCES Cliente (Id)
+);
+
+-- Criação da tabela "Produto"
+-- DROP TABLE Produto;
+CREATE TABLE Produto (
+    Id INTEGER NOT NULL,
+    Designacao VARCHAR(75) NOT NULL,
+    Tipo CHAR(3) NOT NULL,
+    Preco DECIMAL(8,2) NOT NULL,
+    PRIMARY KEY (Id)
+);
+
+-- Criação da tabela "ReservaProduto"
+-- DROP TABLE ReservaProduto;
+CREATE TABLE ReservaProduto (
+    Reserva INTEGER NOT NULL,
+    Produto INTEGER NOT NULL,
+    Preco DECIMAL(8,2) NOT NULL,
+    Quantidade INTEGER NOT NULL,
+    Valor DECIMAL(9,2) NOT NULL,
+    PRIMARY KEY (Reserva, Produto),
+    FOREIGN KEY (Reserva)
+		REFERENCES Reserva (Número),
+    FOREIGN KEY (Produto)
+		REFERENCES Produto (Id)
+);
+ 
+-- Criação da tabela "Fornecedor"
+-- DROP TABLE Fornecedor;
+ CREATE TABLE Fornecedor (
+    Id INTEGER NOT NULL,
+    Designação VARCHAR(75) NOT NULL,
+    Contacto VARCHAR(75) NULL,
+	PRIMARY KEY (Id)
+    );
+
+-- Criação da tabela "ProdutoFornecdor"
+-- DROP TABLE ProdutoFornecedor;
+CREATE TABLE ProdutoFornecedor (
+    Produto INTEGER,
+    Fornecedor INTEGER,
+    PRIMARY KEY (Produto, Fornecedor),
+    FOREIGN KEY (Produto)
+		REFERENCES Produto (Id),
+	FOREIGN KEY (Fornecedor)
+		REFERENCES Fornecedor (Id)
+);
+ 
+-- Criação da tabela "Fatura"
+-- DROP TABLE Fatura;
+CREATE TABLE Fatura (
+    Número INTEGER NOT NULL,
+    Valor DECIMAL(8,2) NOT NULL DEFAULT 0,
+    Reserva INTEGER NOT NULL,
+    PRIMARY KEY (Número),
+    FOREIGN KEY (Reserva)
+		REFERENCES Reserva (Número)
+);
+
+-- Adicionar um novo atributo à tabela "Fatura"
+ALTER TABLE Fatura
+	ADD COLUMN Data DATE;
+    
+
+-- <fim>
+-- Belo, 2023
